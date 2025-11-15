@@ -1,20 +1,19 @@
 /*
 HostelExpenseTracker/
-│
-├── include/
-│     ├── students.h
-│     ├── expenses.h
-│     ├── reports.h
-│     ├── storage.h
-│     └── menu.h
-│
-└── src/
-      ├── main.cpp
-      ├── students.cpp
-      ├── expenses.cpp
-      ├── reports.cpp
-      ├── storage.cpp
-      └── menu.cpp
+
+├── headers/
+│   ├── constants.h
+│   ├── structures.h
+│   ├── file_management.h
+│   ├── group_operations.h
+│   └── utility.h
+├── source/
+│   ├── main.cpp
+│   ├── file_management.cpp
+│   ├── group_operations.cpp
+│   └── utility.cpp
+└── reports/
+    └── (created automatically)
 
 */
 
