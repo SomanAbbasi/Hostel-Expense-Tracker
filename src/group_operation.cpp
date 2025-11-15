@@ -5,7 +5,7 @@
 #include <iomanip>
 #include <algorithm>
 #include "../include/constants.h"
-//#include "../include/file_management.h"
+// #include "../include/file_management.h"
 #include "../include/structures.h"
 #include "../include/group_operation.h"
 
@@ -68,27 +68,256 @@ void createNewGroup(Group allGroups[], int &totalGroups)
     pauseConsole();
 }
 
-void manageExistingGroup(Group allGroups[], int totalGroups) { cout << "Testing" << endl; }
-void showAllGroupsList(Group allGroups[], int totalGroups) { cout << "Testing" << endl; }
-void showFinancialSummary(Group allGroups[], int totalGroups) { cout << "Testing" << endl; }
-void showSystemInfo() { cout << "Testing" << endl; }
+void manageExistingGroup(Group allGroups[], int totalGroups)
+{
+    if (totalGroups == 0)
+    {
+        cout << "No groups available. Please create a group first.\n";
+        pauseConsole();
+        return;
+    }
+    showAllGroupsList(allGroups, totalGroups);
+    string selectedGroupId;
+    cout << "Enter Group ID to manage: ";
+    getline(cin, selectedGroupId);
+    int groupIndex = findGroupByID(allGroups, totalGroups, selectedGroupId);
+    if (groupIndex == -1)
+    {
+        cout << "Group not found!\n";
+        pauseConsole();
+        return;
+    }
 
-void showGroupMenu(string groupName) { cout << "Testing" << endl; }
+    Group &currentGroup = allGroups[groupIndex];
+    int groupChoice;
+    do
+    {
+        clearScreen();
+        showGroupMenu(currentGroup.groupName);
+        cout << "Enter your choice (1-13): ";
+        cin >> groupChoice;
+        cin.ignore();
+
+        switch (groupChoice)
+        {
+        case 1:
+            addNewMember(currentGroup);
+            break;
+        case 2:
+            showAllMembers(currentGroup);
+            break;
+        case 3:
+            addNewExpense(currentGroup);
+            break;
+        case 4:
+            addNewTransaction(currentGroup);
+            break;
+        case 5:
+            showAllExpenses(currentGroup);
+            break;
+        case 6:
+            showAllTransactions(currentGroup);
+            break;
+        case 7:
+            calculateSettlements(currentGroup);
+            break;
+        case 8:
+            showGroupFinancials(currentGroup);
+            break;
+        case 9:
+            showMonthlyExpenses(currentGroup);
+            break;
+        case 10:
+            markTransactionSettled(currentGroup);
+            break;
+        case 11:
+            updateMemberBalances(currentGroup);
+            break;
+        case 12:
+            cout << "Returning to main menu...\n";
+            break;
+        default:
+            cout << "Invalid choice!\n";
+            pauseConsole();
+        }
+    } while (groupChoice != 12);
+}
+
+void showAllGroupsList(Group allGroups[], int totalGroups)
+{
+    cout << "\n=== ALL GROUPS ===\n";
+
+    if (totalGroups == 0)
+    {
+        cout << "No groups found.\n";
+        pauseConsole();
+        return;
+    }
+
+    for (int i = 0; i < totalGroups; i++)
+    {
+        cout << (i + 1) << ". " << allGroups[i].groupName
+             << " (ID: " << allGroups[i].groupId << ")\n";
+        cout << "   Members: " << allGroups[i].memberCount
+             << " | Expenses: " << allGroups[i].expenseCount
+             << " | Transactions: " << allGroups[i].transactionCount << endl;
+    }
+    pauseConsole();
+}
+
+void showFinancialSummary(Group allGroups[], int totalGroups)
+{
+    if (totalGroups == 0)
+    {
+        cout << "No groups available.\n";
+        pauseConsole();
+        return;
+    }
+
+    showAllGroupsList(allGroups, totalGroups);
+    string selectedGroupId;
+    cout << "Enter Group ID for financial overview: ";
+    getline(cin, selectedGroupId);
+
+    int groupIndex = findGroupByID(allGroups, totalGroups, selectedGroupId);
+    if (groupIndex == -1)
+    {
+        cout << "Group not found!\n";
+        pauseConsole();
+        return;
+    }
+
+    showGroupFinancials(allGroups[groupIndex]);
+}
+void showSystemInfo()
+{
+
+    clearScreen();
+    cout << "========================================\n";
+    cout << "        SYSTEM INFORMATION\n";
+    cout << "========================================\n";
+    cout << "Hostel Expense Tracker - Group Management\n";
+    cout << "\nFeatures:\n";
+    cout << "- Create and manage multiple groups\n";
+    cout << "- Track expenses and shared costs\n";
+    cout << "- Record borrow/lend transactions\n";
+    cout << "- Calculate settlements automatically\n";
+    cout << "- View financial summaries\n";
+    cout << "- Monthly expense tracking\n";
+    cout << "\nLimits:\n";
+    cout << "- Maximum " << MAX_GROUPS << " groups\n";
+    cout << "- Maximum " << MAX_MEMBERS_PER_GROUP << " members per group\n";
+    cout << "- Maximum " << MAX_EXPENSES_PER_GROUP << " expenses per group\n";
+    cout << "- Maximum " << MAX_TRANSACTIONS_PER_GROUP << " transactions per group\n";
+    cout << "========================================\n";
+    pauseConsole();
+}
+
+void showGroupMenu(string groupName)
+{
+
+    printHeader();
+    cout << "MANAGING GROUP: " << groupName << "\n";
+    cout << "========================================\n";
+    cout << "1. Add New Member\n";
+    cout << "2. Show All Members\n";
+    cout << "3. Add New Expense\n";
+    cout << "4. Add Borrow/Lend Transaction\n";
+    cout << "5. Show All Expenses\n";
+    cout << "6. Show All Transactions\n";
+    cout << "7. Calculate Settlements\n";
+    cout << "8. Financial Overview\n";
+    cout << "9. Monthly Summary\n";
+    cout << "10. Settle Transaction\n";
+    cout << "11. Update Balances\n";
+    cout << "12. Back to Main Menu\n";
+    cout << "========================================\n";
+    
+}
 void showAllMembers(Group &group) { cout << "Testing" << endl; }
 void addNewExpense(Group &group) { cout << "Testing" << endl; }
 void addNewTransaction(Group &group) { cout << "Testing" << endl; }
 void showAllExpenses(Group &group) { cout << "Testing" << endl; }
 void showAllTransactions(Group &group) { cout << "Testing" << endl; }
 void calculateSettlements(Group &group) { cout << "Testing" << endl; }
-void showGroupFinancials(Group &group) { cout << "Testing" << endl; }
+void showGroupFinancials(Group &group)
+{
+    cout << "\n=== FINANCIAL OVERVIEW ===\n";
+
+    if (group.memberCount == 0)
+    {
+        cout << "No members in group.\n";
+        pauseConsole();
+        return;
+    }
+    // Calculate total expenses
+    double totalGroupExpenses = 0;
+    for (int i = 0; i < group.expenseCount; i++)
+    {
+        totalGroupExpenses += group.expenses[i].amount;
+    }
+
+    cout << "Total Group Expenses: $" << fixed << setprecision(2) << totalGroupExpenses << endl;
+
+    if (group.memberCount > 0)
+    {
+        cout << "Average per Member: $" << totalGroupExpenses / group.memberCount << endl;
+    }
+
+    cout << "\nMember Contributions:\n";
+    for (int i = 0; i < group.memberCount; i++)
+    {
+        double balance = group.members[i].totalPaid - group.members[i].totalSpent;
+        cout << group.members[i].name << ":\n";
+        cout << "  Paid: $" << group.members[i].totalPaid;
+        cout << " | Spent: $" << group.members[i].totalSpent;
+        cout << " | Balance: $" << balance;
+        if (balance > 0)
+        {
+            cout << " (should receive)";
+        }
+        else if (balance < 0)
+        {
+            cout << " (should pay)";
+        }
+        cout << endl;
+    }
+
+    cout << "\nOutstanding Debts:\n";
+    bool hasDebts = false;
+    for (int i = 0; i < group.transactionCount; i++)
+    {
+        if (!group.transactions[i].isSettled)
+        {
+            cout << group.members[group.transactions[i].fromMember].name
+                 << " owes " << group.members[group.transactions[i].toMember].name
+                 << ": Rs. " << group.transactions[i].amount << endl;
+            hasDebts = true;
+        }
+    }
+
+    if (!hasDebts)
+    {
+        cout << "No outstanding debts.\n";
+    }
+    pauseConsole();
+}
 void showMonthlyExpenses(Group &group) { cout << "Testing" << endl; }
 void markTransactionSettled(Group &group) { cout << "Testing" << endl; }
 
 void displayAllCategories() { cout << "Testing" << endl; }
-bool checkValidDate(string date) { cout << "Testing" << endl ; return true; }
+bool checkValidDate(string date)
+{
+    cout << "Testing" << endl;
+    return true;
+}
 void updateMemberBalances(Group &group) { cout << "Testing" << endl; }
 
-bool isValidDate(const string &date) { cout << "Testing" << endl;return true; }
+bool isValidDate(const string &date)
+{
+    cout << "Testing" << endl;
+    return true;
+}
 
 void addNewMember(Group &group)
 {
@@ -119,6 +348,7 @@ void addNewMember(Group &group)
     cout << "Member added successfully!\n";
     pauseConsole();
 }
+
 int findMemberByID(Group &group, string memberId)
 {
     for (int i = 0; i < group.memberCount; i++)
@@ -144,8 +374,8 @@ int findGroupByID(Group allGroups[], int totalGroups, string groupId)
 
 void clearScreen()
 {
-    // system("cls");
-    cout<<"Testing "<<endl;
+    system("cls");
+    // cout << "Testing " << endl;
 }
 
 void pauseConsole()
