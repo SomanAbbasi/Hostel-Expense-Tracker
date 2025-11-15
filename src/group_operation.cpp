@@ -232,10 +232,158 @@ void showGroupMenu(string groupName)
     cout << "11. Update Balances\n";
     cout << "12. Back to Main Menu\n";
     cout << "========================================\n";
-    
 }
-void showAllMembers(Group &group) { cout << "Testing" << endl; }
-void addNewExpense(Group &group) { cout << "Testing" << endl; }
+
+void addNewMember(Group &group)
+{
+    if (group.memberCount >= MAX_MEMBERS_PER_GROUP)
+    {
+        cout << "Cannot add more members! Group is full.\n";
+        pauseConsole();
+        return;
+    }
+
+    cout << "\n=== ADD NEW MEMBER ===\n";
+    cout << "Enter member name: ";
+    getline(cin, group.members[group.memberCount].name);
+
+    cout << "Enter member ID: ";
+    getline(cin, group.members[group.memberCount].id);
+
+    // Check if member ID already exists
+    if (findMemberByID(group, group.members[group.memberCount].id) != -1)
+    {
+        cout << "Error: Member with this ID already exists in the group!\n";
+        pauseConsole();
+        return;
+    }
+    group.members[group.memberCount].totalPaid = 0.0;
+    group.members[group.memberCount].totalSpent = 0.0;
+    group.memberCount += 1;
+    cout << "Member added successfully!\n";
+    pauseConsole();
+}
+
+void showAllMembers(Group &group)
+{
+    if (group.memberCount == 0)
+    {
+        cout << "No members in group. Please add members first.\n";
+        pauseConsole();
+        return;
+    }
+    for (int i = 0; i < group.memberCount; i++)
+    {
+        cout << (i + 1) << ". " << group.members[i].name
+             << " (ID: " << group.members[i].id << ")\n";
+        cout << "   Total Paid: Rs." << fixed << setprecision(2)
+             << group.members[i].totalPaid;
+        cout << " | Total Spent: Rs." << group.members[i].totalSpent;
+        cout << " | Balance: Rs." << (group.members[i].totalPaid - group.members[i].totalSpent) << endl;
+    }
+    pauseConsole();
+}
+void addNewExpense(Group &group)
+{
+
+    if (group.memberCount == 0)
+    {
+        cout << "No members in group. Please add members first.\n";
+        pauseConsole();
+        return;
+    }
+
+    if (group.expenseCount >= MAX_EXPENSES_PER_GROUP)
+    {
+        cout << "Cannot add more expenses! Maximum limit reached.\n";
+        pauseConsole();
+        return;
+    }
+
+    cout << "\n=== ADD NEW EXPENSE ===\n";
+
+    // Show Categoreis
+    displayAllCategories();
+    int categoryChoice;
+    cout << "Select category (1-" << MAX_CATEGORIES << "): ";
+    cin >> categoryChoice;
+    cin.ignore();
+
+    if (categoryChoice < 1 || categoryChoice > MAX_CATEGORIES)
+    {
+        cout << "Invalid category selection!\n";
+        pauseConsole();
+        return;
+    }
+
+    group.expenses[group.expenseCount].category = categories[categoryChoice - 1];
+
+    cout << "Enter amount: Rs.";
+    cin >> group.expenses[group.expenseCount].amount;
+    cin.ignore();
+
+    if (group.expenses[group.expenseCount].amount <= 0)
+    {
+        cout << "Amount must be positive!\n";
+        pauseConsole();
+        return;
+    }
+
+    showAllMembers(group);
+    int payerIndex;
+    cout << "Select who paid (1-" << group.memberCount << "): ";
+    cin >> payerIndex;
+    cin.ignore();
+
+    if (payerIndex < 1 || payerIndex > group.memberCount)
+    {
+        cout << "Invalid member selection!\n";
+        pauseConsole();
+        return;
+    }
+
+    group.expenses[group.expenseCount].paidBy = payerIndex - 1;
+    // Update member balances
+    group.members[payerIndex - 1].totalPaid += group.expenses[group.expenseCount].amount;
+
+    double sharePerPerson = group.expenses[group.expenseCount].amount / group.memberCount;
+    for (int i = 0; i < group.memberCount; i++)
+    {
+        group.members[i].totalSpent += sharePerPerson;
+    }
+
+    cout << "Enter date (DD-MM-YYYY): ";
+    getline(cin, group.expenses[group.expenseCount].date);
+
+    if (!checkValidDate(group.expenses[group.expenseCount].date))
+    {
+        cout << "Invalid date format! Using current date.\n";
+
+        // Get current date
+        time_t now = time(0);
+        tm *t = localtime(&now);
+
+        int day = t->tm_mday;
+        int month = t->tm_mon + 1;
+        int year = t->tm_year + 1900;
+
+        // Simple string building
+        group.expenses[group.expenseCount].date =
+            to_string(day) + "-" +
+            to_string(month) + "-" +
+            to_string(year);
+    }
+
+    cout << "Enter reason/description: ";
+    getline(cin, group.transactions[group.transactionCount].description);
+
+    group.transactions[group.transactionCount].isSettled = false;
+    group.transactionCount++;
+
+    cout << "Transaction recorded successfully!\n";
+    pauseConsole();
+
+}
 void addNewTransaction(Group &group) { cout << "Testing" << endl; }
 void showAllExpenses(Group &group) { cout << "Testing" << endl; }
 void showAllTransactions(Group &group) { cout << "Testing" << endl; }
@@ -305,7 +453,14 @@ void showGroupFinancials(Group &group)
 void showMonthlyExpenses(Group &group) { cout << "Testing" << endl; }
 void markTransactionSettled(Group &group) { cout << "Testing" << endl; }
 
-void displayAllCategories() { cout << "Testing" << endl; }
+void displayAllCategories()
+{
+    cout << "Available Categories:\n";
+    for (int i = 0; i < MAX_CATEGORIES; i++)
+    {
+        cout << (i + 1) << ". " << categories[i] << endl;
+    }
+}
 bool checkValidDate(string date)
 {
     cout << "Testing" << endl;
@@ -317,36 +472,6 @@ bool isValidDate(const string &date)
 {
     cout << "Testing" << endl;
     return true;
-}
-
-void addNewMember(Group &group)
-{
-    if (group.memberCount >= MAX_MEMBERS_PER_GROUP)
-    {
-        cout << "Cannot add more members! Group is full.\n";
-        pauseConsole();
-        return;
-    }
-
-    cout << "\n=== ADD NEW MEMBER ===\n";
-    cout << "Enter member name: ";
-    getline(cin, group.members[group.memberCount].name);
-
-    cout << "Enter member ID: ";
-    getline(cin, group.members[group.memberCount].id);
-
-    // Check if member ID already exists
-    if (findMemberByID(group, group.members[group.memberCount].id) != -1)
-    {
-        cout << "Error: Member with this ID already exists in the group!\n";
-        pauseConsole();
-        return;
-    }
-    group.members[group.memberCount].totalPaid = 0.0;
-    group.members[group.memberCount].totalSpent = 0.0;
-    group.memberCount += 1;
-    cout << "Member added successfully!\n";
-    pauseConsole();
 }
 
 int findMemberByID(Group &group, string memberId)
