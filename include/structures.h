@@ -37,15 +37,16 @@ struct Group
 {
     string groupId;
     string groupName;
-    Member *members;
+    Member members[MAX_MEMBERS_PER_GROUP];
+    // Member *members;
     int memberCount;
     int memberCapcaity;
-    Expense *expenses;
+    Expense expenses[MAX_EXPENSES_PER_GROUP];
+    // Expense *expenses;
     int expenseCount;
     int expenseCapacity;
-    Transaction *transactions;
+    //   Transaction *transactions;
+    Transaction transactions[MAX_TRANSACTIONS_PER_GROUP];
     int transactionCount;
     int transactionCapacity;
 };
-
-

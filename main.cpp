@@ -11,7 +11,7 @@ HostelExpenseTracker/
 │   ├── main.cpp
 │   ├── file_management.cpp
 │   ├── group_operations.cpp
-│   └── utility.cpp
+│  
 └── reports/
     └── (created automatically)
 
