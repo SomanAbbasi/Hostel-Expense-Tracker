@@ -9,6 +9,8 @@
 #include "../include/structures.h"
 #include "../include/group_operation.h"
 
+using namespace std;
+
 void initializeSystem()
 {
     //  createReportsFolder();
@@ -22,8 +24,9 @@ void showMainMenu()
     printHeader();
     cout << "1. Create New Group\n";
     cout << "2. Manage Existing Group\n";
-    cout << "4. Financial Overview\n";
     cout << "3. Show All Groups\n";
+    cout << "4. Financial Overview\n";
+
     cout << "5. Save All Data\n";
     cout << "6. Load All Data\n";
     cout << "7. System Info\n";
@@ -283,9 +286,9 @@ void showAllMembers(Group &group)
     }
     pauseConsole();
 }
+
 void addNewExpense(Group &group)
 {
-
     if (group.memberCount == 0)
     {
         cout << "No members in group. Please add members first.\n";
@@ -302,7 +305,7 @@ void addNewExpense(Group &group)
 
     cout << "\n=== ADD NEW EXPENSE ===\n";
 
-    // Show Categoreis
+    // Show Categories
     displayAllCategories();
     int categoryChoice;
     cout << "Select category (1-" << MAX_CATEGORIES << "): ";
@@ -360,30 +363,31 @@ void addNewExpense(Group &group)
     {
         cout << "Invalid date format! Using current date.\n";
 
-        // Get current date
+        //  current date
         time_t now = time(0);
         tm *t = localtime(&now);
 
-        int day = t->tm_mday;         // Give day of moth
-        int month = t->tm_mon + 1;    // gives month
-        int year = t->tm_year + 1900; // store year
+        int day = t->tm_mday;
+        int month = t->tm_mon + 1;
+        int year = t->tm_year + 1900;
 
-        // Simple string building
-        group.expenses[group.expenseCount].date =
-            to_string(day) + "-" +
-            to_string(month) + "-" +
-            to_string(year);
+        string dayStr = (day < 10) ? "0" + to_string(day) : to_string(day);
+        string monthStr = (month < 10) ? "0" + to_string(month) : to_string(month);
+
+        group.expenses[group.expenseCount].date = dayStr + "-" + monthStr + "-" + to_string(year);
     }
 
-    cout << "Enter reason/description: ";
-    getline(cin, group.transactions[group.transactionCount].description);
+    cout << "Enter description: ";
+    getline(cin, group.expenses[group.expenseCount].description);
 
-    group.transactions[group.transactionCount].isSettled = false;
-    group.transactionCount++;
+    group.expenses[group.expenseCount].isSettled = false;
+    group.expenseCount++;
 
-    cout << "Transaction recorded successfully!\n";
+    cout << "Expense added successfully!\n";
+    cout << "Each member owes: Rs." << sharePerPerson << endl;
     pauseConsole();
 }
+
 void addNewTransaction(Group &group)
 {
     if (group.memberCount < 2)
@@ -419,10 +423,12 @@ void addNewTransaction(Group &group)
     }
 
     group.transactions[group.transactionCount].fromMember = borrowerIndex - 1;
-    group.transactions[group.transactionCount].toMember = borrowerIndex - 1;
+    group.transactions[group.transactionCount].toMember = lenderIndex - 1; // Fixed: use lenderIndex
+
     cout << "Enter amount: Rs.";
     cin >> group.transactions[group.transactionCount].amount;
     cin.ignore();
+
     cout << "Enter date (DD-MM-YYYY): ";
     getline(cin, group.transactions[group.transactionCount].date);
 
@@ -430,7 +436,7 @@ void addNewTransaction(Group &group)
     {
         cout << "Invalid date format! Using current date.\n";
 
-        // Get current system date
+        //  current system date
         time_t now = time(0);
         tm *t = localtime(&now);
 
@@ -438,11 +444,13 @@ void addNewTransaction(Group &group)
         int month = t->tm_mon + 1;
         int year = t->tm_year + 1900;
 
-        group.transactions[group.transactionCount].date =
-            to_string(day) + "-" +
-            to_string(month) + "-" +
-            to_string(year);
+        //  date format
+        string dayStr = (day < 10) ? "0" + to_string(day) : to_string(day);
+        string monthStr = (month < 10) ? "0" + to_string(month) : to_string(month);
+
+        group.transactions[group.transactionCount].date = dayStr + "-" + monthStr + "-" + to_string(year);
     }
+
     cout << "Enter reason/description: ";
     getline(cin, group.transactions[group.transactionCount].description);
 
@@ -452,6 +460,7 @@ void addNewTransaction(Group &group)
     cout << "Transaction recorded successfully!\n";
     pauseConsole();
 }
+
 void showAllExpenses(Group &group)
 {
     cout << "\n=== ALL EXPENSES ===\n";
@@ -488,7 +497,7 @@ void showAllTransactions(Group &group)
 
     if (group.transactionCount == 0)
     {
-        cout << "No expenses recorded.\n";
+        cout << "No transaction recorded.\n";
         pauseConsole();
         return;
     }
@@ -506,8 +515,96 @@ void showAllTransactions(Group &group)
         }
         cout << endl;
     }
+
+    pauseConsole();
 }
-void calculateSettlements(Group &group) { cout << "Testing" << endl; }
+void calculateSettlements(Group &group)
+{
+    if (group.memberCount == 0)
+    {
+        cout << "No members in group.\n";
+        pauseConsole();
+        return;
+    }
+
+    cout << "\n=== SETTLEMENT CALCULATIONS ===\n";
+
+    // Calculate net balance for each memeber
+    double memberBalances[MAX_MEMBERS_PER_GROUP] = {0};
+    for (int i = 0; i < group.expenseCount; i++)
+    {
+        if (!group.expenses[i].isSettled)
+        {
+            double share = group.expenses[i].amount / group.memberCount;
+            memberBalances[group.expenses[i].paidBy] += group.expenses[i].amount - share;
+
+            for (int j = 0; j < group.memberCount; j++)
+            {
+                if (j != group.expenses[i].paidBy)
+                {
+                    memberBalances[j] -= share;
+                }
+            }
+        }
+    }
+
+    // Include transactions in balance calculation
+    for (int i = 0; i < group.transactionCount; i++)
+    {
+        if (!group.transactions[i].isSettled)
+        {
+            memberBalances[group.transactions[i].fromMember] -= group.transactions[i].amount;
+            memberBalances[group.transactions[i].toMember] += group.transactions[i].amount;
+        }
+    }
+
+    // Show current balances
+    cout << "Current Balances:\n";
+    for (int i = 0; i < group.memberCount; i++)
+    {
+        cout << group.members[i].name << ": Rs." << fixed << setprecision(2) << memberBalances[i];
+        if (memberBalances[i] > 0)
+        {
+            cout << " (should receive)";
+        }
+        else if (memberBalances[i] < 0)
+        {
+            cout << " (should pay)";
+        }
+        cout << endl;
+    }
+
+    cout << "\nSettlement Instructions:\n";
+    bool needsSettlement = false;
+
+    // settlement calculation
+    for (int i = 0; i < group.memberCount; i++)
+    {
+        for (int j = i + 1; j < group.memberCount; j++)
+        {
+            if (memberBalances[i] < 0 && memberBalances[j] > 0)
+            {
+                double amount = min(-memberBalances[i], memberBalances[j]);
+                if (amount > 0.01)
+                {
+                    cout << group.members[i].name << " should pay "
+                         << group.members[j].name << ": Rs." << amount << endl;
+                    memberBalances[i] += amount;
+                    memberBalances[j] -= amount;
+                    needsSettlement = true;
+                }
+            }
+        }
+    }
+
+    if (!needsSettlement)
+    {
+        cout << "No settlements needed. All balances are settled!\n";
+    }
+
+    pauseConsole();
+}
+
 void showGroupFinancials(Group &group)
 {
     cout << "\n=== FINANCIAL OVERVIEW ===\n";
@@ -525,11 +622,11 @@ void showGroupFinancials(Group &group)
         totalGroupExpenses += group.expenses[i].amount;
     }
 
-    cout << "Total Group Expenses: $" << fixed << setprecision(2) << totalGroupExpenses << endl;
+    cout << "Total Group Expenses: Rs." << fixed << setprecision(2) << totalGroupExpenses << endl;
 
     if (group.memberCount > 0)
     {
-        cout << "Average per Member: $" << totalGroupExpenses / group.memberCount << endl;
+        cout << "Average per Member: Rs." << totalGroupExpenses / group.memberCount << endl;
     }
 
     cout << "\nMember Contributions:\n";
@@ -537,9 +634,9 @@ void showGroupFinancials(Group &group)
     {
         double balance = group.members[i].totalPaid - group.members[i].totalSpent;
         cout << group.members[i].name << ":\n";
-        cout << "  Paid: $" << group.members[i].totalPaid;
-        cout << " | Spent: $" << group.members[i].totalSpent;
-        cout << " | Balance: $" << balance;
+        cout << "  Paid: Rs." << group.members[i].totalPaid;
+        cout << " | Spent: Rs." << group.members[i].totalSpent;
+        cout << " | Balance: Rs." << balance;
         if (balance > 0)
         {
             cout << " (should receive)";
@@ -570,8 +667,80 @@ void showGroupFinancials(Group &group)
     }
     pauseConsole();
 }
-void showMonthlyExpenses(Group &group) { cout << "Testing" << endl; }
-void markTransactionSettled(Group &group) { cout << "Testing" << endl; }
+void showMonthlyExpenses(Group &group)
+{
+    cout << "\n=== MONTHLY EXPENSE SUMMARY ===\n";
+
+    string monthYear;
+    cout << "Enter month and year to view (MM-YYYY): ";
+    getline(cin, monthYear);
+
+    if (monthYear.length() != 7 || monthYear[2] != '-')
+    {
+        cout << "Invalid format! Please use MM-YYYY format.\n";
+        pauseConsole();
+        return;
+    }
+
+    double monthlyTotal = 0;
+    int expenseCount = 0;
+    cout << "\nExpenses for " << monthYear << ":\n";
+
+    for (int i = 0; i < group.expenseCount; i++)
+    {
+        string expenseMonthYear = group.expenses[i].date.substr(3, 7);
+        if (expenseMonthYear == monthYear)
+        {
+            cout << "*" << group.expenses[i].category << " :Rs."
+                 << fixed << setprecision(2) << group.expenses[i].amount
+                 << "(" << group.members[group.expenses[i].paidBy].name << ")" << endl;
+            monthlyTotal += group.expenses[i].amount;
+            expenseCount++;
+        }
+    }
+
+    cout << "\nSummary for " << monthYear << ":\n";
+    cout << "Total Expenses: Rs." << monthlyTotal << endl;
+    cout << "Number of Expenses: " << expenseCount << endl;
+
+    if (group.memberCount > 0)
+    {
+        cout << "Average per Member: Rs." << monthlyTotal / group.memberCount << endl;
+    }
+
+    if (expenseCount == 0)
+    {
+        cout << "No expenses found for this month.\n";
+    }
+
+    pauseConsole();
+}
+void markTransactionSettled(Group &group)
+{
+    if (group.transactionCount == 0)
+    {
+        cout << "No transactions available.\n";
+        pauseConsole();
+        return;
+    }
+
+    showAllTransactions(group);
+
+    int transactionNumber;
+    cout << "Enter transaction number to mark as settled (1-" << group.transactionCount << "): ";
+    cin >> transactionNumber;
+    cin.ignore();
+
+    if (transactionNumber < 1 || transactionNumber > group.transactionCount)
+    {
+        cout << "Invalid transaction number!\n";
+        pauseConsole();
+        return;
+    }
+    group.transactions[transactionNumber - 1].isSettled = true;
+    cout << "Transaction marked as settled!\n";
+    pauseConsole();
+}
 
 void displayAllCategories()
 {
@@ -580,6 +749,32 @@ void displayAllCategories()
     {
         cout << (i + 1) << ". " << categories[i] << endl;
     }
+}
+
+void updateMemberBalances(Group &group)
+{
+    cout << "\n=== UPDATING MEMBER BALANCES ===\n";
+    // Reset all balances
+    for (int i = 0; i < group.memberCount; i++)
+    {
+        group.members[i].totalPaid = 0.0;
+        group.members[i].totalSpent = 0.0;
+    }
+
+    // Recalculate from expenses
+    for (int i = 0; i < group.expenseCount; i++)
+    {
+        group.members[group.expenses[i].paidBy].totalPaid += group.expenses[i].amount;
+
+        double share = group.expenses[i].amount / group.memberCount;
+        for (int j = 0; j < group.memberCount; j++)
+        {
+            group.members[j].totalSpent += share;
+        }
+    }
+
+    cout << "All member balances have been updated!\n";
+    pauseConsole();
 }
 bool checkValidDate(string date)
 {
@@ -606,7 +801,6 @@ bool checkValidDate(string date)
     }
     return true;
 }
-void updateMemberBalances(Group &group) { cout << "Testing" << endl; }
 
 // bool isValidDate(const string &date)
 // {
@@ -618,7 +812,7 @@ int findMemberByID(Group &group, string memberId)
     {
         if (group.members[i].id == memberId)
         {
-            return 1;
+            return i;
         }
     }
     return -1;
@@ -629,7 +823,7 @@ int findGroupByID(Group allGroups[], int totalGroups, string groupId)
     {
         if (allGroups[i].groupId == groupId)
         {
-            return 1;
+            return i;
         }
     }
     return -1;

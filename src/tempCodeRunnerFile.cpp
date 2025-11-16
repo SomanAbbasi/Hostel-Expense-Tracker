@@ -1,1 +1,1 @@
- g++ main.cpp group_operation.cpp -o  main
+g++ main.cpp group_operation.cpp -o  main
