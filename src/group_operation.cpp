@@ -452,8 +452,61 @@ void addNewTransaction(Group &group)
     cout << "Transaction recorded successfully!\n";
     pauseConsole();
 }
-void showAllExpenses(Group &group) { cout << "Testing" << endl; }
-void showAllTransactions(Group &group) { cout << "Testing" << endl; }
+void showAllExpenses(Group &group)
+{
+    cout << "\n=== ALL EXPENSES ===\n";
+
+    if (group.expenseCount == 0)
+    {
+        cout << "No expenses recorded.\n";
+        pauseConsole();
+        return;
+    }
+
+    double totalExpenses = 0;
+    for (int i = 0; i < group.expenseCount; i++)
+    {
+        cout << (i + 1) << ". " << group.expenses[i].category
+             << " - Rs." << fixed << setprecision(2) << group.expenses[i].amount << "\n";
+        cout << "   Paid by: " << group.members[group.expenses[i].paidBy].name;
+        cout << " | Date: " << group.expenses[i].date;
+        cout << " | " << group.expenses[i].description;
+        if (group.expenses[i].isSettled)
+        {
+            cout << " [SETTLED]";
+        }
+        cout << endl;
+        totalExpenses += group.expenses[i].amount;
+    }
+
+    cout << "\nTotal Expenses: Rs." << totalExpenses << endl;
+    pauseConsole();
+}
+void showAllTransactions(Group &group)
+{
+    cout << "\n=== ALL TRANSACTION ===\n";
+
+    if (group.transactionCount == 0)
+    {
+        cout << "No expenses recorded.\n";
+        pauseConsole();
+        return;
+    }
+
+    for (int i = 0; i < group.transactionCount; i++)
+    {
+        cout << (i + 1) << ". " << group.members[group.transactions[i].fromMember].name
+             << " borrowed Rs." << fixed << setprecision(2) << group.transactions[i].amount
+             << " from " << group.members[group.transactions[i].toMember].name << "\n";
+        cout << "   Date: " << group.transactions[i].date;
+        cout << " | Reason: " << group.transactions[i].description;
+        if (group.transactions[i].isSettled)
+        {
+            cout << " [SETTLED]";
+        }
+        cout << endl;
+    }
+}
 void calculateSettlements(Group &group) { cout << "Testing" << endl; }
 void showGroupFinancials(Group &group)
 {
