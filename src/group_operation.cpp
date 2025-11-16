@@ -343,6 +343,7 @@ void addNewExpense(Group &group)
     }
 
     group.expenses[group.expenseCount].paidBy = payerIndex - 1;
+
     // Update member balances
     group.members[payerIndex - 1].totalPaid += group.expenses[group.expenseCount].amount;
 
@@ -363,9 +364,9 @@ void addNewExpense(Group &group)
         time_t now = time(0);
         tm *t = localtime(&now);
 
-        int day = t->tm_mday;
-        int month = t->tm_mon + 1;
-        int year = t->tm_year + 1900;
+        int day = t->tm_mday;         // Give day of moth
+        int month = t->tm_mon + 1;    // gives month
+        int year = t->tm_year + 1900; // store year
 
         // Simple string building
         group.expenses[group.expenseCount].date =
@@ -382,9 +383,75 @@ void addNewExpense(Group &group)
 
     cout << "Transaction recorded successfully!\n";
     pauseConsole();
-
 }
-void addNewTransaction(Group &group) { cout << "Testing" << endl; }
+void addNewTransaction(Group &group)
+{
+    if (group.memberCount < 2)
+    {
+        cout << "Need at least 2 members for transactions!\n";
+        pauseConsole();
+        return;
+    }
+    if (group.transactionCount >= MAX_TRANSACTIONS_PER_GROUP)
+    {
+        cout << "Cannot add more transactions! Maximum limit reached.\n";
+        pauseConsole();
+        return;
+    }
+
+    cout << "\n=== ADD BORROW/LEND TRANSACTION ===\n";
+
+    showAllMembers(group);
+    int borrowerIndex, lenderIndex;
+    cout << "Select who borrowed money (1-" << group.memberCount << "): ";
+    cin >> borrowerIndex;
+    cout << "Select who lent money (1-" << group.memberCount << "): ";
+    cin >> lenderIndex;
+    cin.ignore();
+
+    if (borrowerIndex < 1 || borrowerIndex > group.memberCount ||
+        lenderIndex < 1 || lenderIndex > group.memberCount ||
+        borrowerIndex == lenderIndex)
+    {
+        cout << "Invalid member selection!\n";
+        pauseConsole();
+        return;
+    }
+
+    group.transactions[group.transactionCount].fromMember = borrowerIndex - 1;
+    group.transactions[group.transactionCount].toMember = borrowerIndex - 1;
+    cout << "Enter amount: Rs.";
+    cin >> group.transactions[group.transactionCount].amount;
+    cin.ignore();
+    cout << "Enter date (DD-MM-YYYY): ";
+    getline(cin, group.transactions[group.transactionCount].date);
+
+    if (!checkValidDate(group.transactions[group.transactionCount].date))
+    {
+        cout << "Invalid date format! Using current date.\n";
+
+        // Get current system date
+        time_t now = time(0);
+        tm *t = localtime(&now);
+
+        int day = t->tm_mday;
+        int month = t->tm_mon + 1;
+        int year = t->tm_year + 1900;
+
+        group.transactions[group.transactionCount].date =
+            to_string(day) + "-" +
+            to_string(month) + "-" +
+            to_string(year);
+    }
+    cout << "Enter reason/description: ";
+    getline(cin, group.transactions[group.transactionCount].description);
+
+    group.transactions[group.transactionCount].isSettled = false;
+    group.transactionCount++;
+
+    cout << "Transaction recorded successfully!\n";
+    pauseConsole();
+}
 void showAllExpenses(Group &group) { cout << "Testing" << endl; }
 void showAllTransactions(Group &group) { cout << "Testing" << endl; }
 void calculateSettlements(Group &group) { cout << "Testing" << endl; }
@@ -463,16 +530,34 @@ void displayAllCategories()
 }
 bool checkValidDate(string date)
 {
-    cout << "Testing" << endl;
+    if (date.length() != 10)
+    {
+
+        return false;
+    }
+    if (date[2] != '-' || date[5] != '-')
+    {
+        return false;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (i == 2 || i == 5)
+        {
+            continue;
+        }
+        if (!isdigit(date[i]))
+        {
+            return false;
+        }
+    }
     return true;
 }
 void updateMemberBalances(Group &group) { cout << "Testing" << endl; }
 
-bool isValidDate(const string &date)
-{
-    cout << "Testing" << endl;
-    return true;
-}
+// bool isValidDate(const string &date)
+// {
+// }
 
 int findMemberByID(Group &group, string memberId)
 {
