@@ -13,8 +13,10 @@ HostelExpenseTracker/
 │   ├── group_operations.cpp
 │  
 └── reports/
-    └── (created automatically)
-
+    └── Groups/                   
+        ├── data.txt      ->This will contains the information of the groups    
+        └── report.txt    ->This will contains the the details about expenses and settlements
+        
 */
 
 /*
