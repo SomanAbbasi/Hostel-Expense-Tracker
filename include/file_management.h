@@ -1,19 +1,22 @@
-
 #pragma once
 #include "structures.h"
+#include <string>
 
-bool folderExists(const string& path);
-void createReportsFolder();
-void createGroupFolder(const string& groupId);
-string getGroupFolderPath(const string& groupId);
-string getGroupTextReportPath(const string& groupId);
-string getGroupBinaryDataPath(const string& groupId);
-void saveGroupBinaryData(Group& group);
-void loadGroupBinaryData(Group& group);
-void generateGroupTextReport(Group& group);
-void saveGroupData(Group& group);
-void loadGroupData(Group& group);
-void saveAllData(Group* groups, int groupCount);
-void loadAllData(Group*& groups, int& groupCount);
+using namespace std;
 
+// file management functions
+bool checkFolderExists(const string& folderPath);
+void createReportsDirectory();
+void createGroupDirectory(const string& groupId);
 
+// File paths
+string getGroupDirectoryPath(const string& groupId);
+string getGroupReportFilePath(const string& groupId);
+string getGroupDataFilePath(const string& groupId);
+
+// Save and load functions
+void saveGroupToFile(Group& group);
+void loadGroupFromFile(Group& group);
+void createGroupReport(Group& group);
+void saveAllGroupsData(Group groups[], int groupCount);
+void loadAllGroupsData(Group groups[], int& groupCount);
