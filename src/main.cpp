@@ -2,17 +2,21 @@
 #include <iostream>
 #include <string>
 #include "../include/constants.h"
-// #include "../include/file_management.h"
+#include "../include/file_management.h"
 #include "../include/structures.h"
 #include "../include/group_operation.h"
 
-//  g++ main.cpp group_operation.cpp -o  main
+//  g++ file_management.cpp main.cpp group_operation.cpp -o main
+// .\build.bat
 int main()
 {
     Group allGroups[MAX_GROUPS];
     int totalGroups = 0;
 
     initializeSystem();
+    // Ensuring to have the Files
+    createReportsDirectory();
+
 
     int userChoice;
 
@@ -40,11 +44,11 @@ int main()
 
             break;
         case 5:
-            cout << "Save feature not implemented in this version.\n";
+            saveAllGroupsData(allGroups,totalGroups);
             pauseConsole();
             break;
         case 6:
-            cout << "Load feature not implemented in this version.\n";
+            loadAllGroupsData(allGroups,totalGroups);
             pauseConsole();
             break;
         case 7:

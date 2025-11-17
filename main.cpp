@@ -1,4 +1,15 @@
 /*
+HOW TO RUN IT
+
+OPTION 1:
+    => .\build.bat
+OPTION 2:
+    => g++ file_management.cpp main.cpp group_operation.cpp -o main
+*/
+
+
+
+/*
 HostelExpenseTracker/
 
 ├── headers/
@@ -13,8 +24,10 @@ HostelExpenseTracker/
 │   ├── group_operations.cpp
 │  
 └── reports/
-    └── (created automatically)
-
+    └── Groups/                   
+        ├── data.txt      ->This will contains the information of the groups    
+        └── report.txt    ->This will contains the the details about expenses and settlements
+        
 */
 
 /*

@@ -1,0 +1,13 @@
+---------Group Report-------------
+Group Name: test1
+Group ID: 1
+Members:
+ -> admin1 (ID: 001) | Paid: 1000.00 | Spent: 333.33 | Balance: 666.67
+ -> soman (ID: 002) | Paid: 0.00 | Spent: 333.33 | Balance: -333.33
+ -> ahmad (ID: 003) | Paid: 0.00 | Spent: 333.33 | Balance: -333.33
+
+Expenses:
+ -> Food & Groceries | Rs:1000.00 | Paid by: admin1 | Date: 17-11-2025 | review | Not Settled
+
+Transactions:
+ -> soman owes ahmad Rs: 1000.00 | Date: 15-11-2025 | medical | Not Settled

@@ -1,0 +1,9 @@
+---------Group Report-------------
+Group Name: test2
+Group ID: 2
+Members:
+ -> admin2 (ID: 001) | Paid: 0.00 | Spent: 0.00 | Balance: 0.00
+
+Expenses:
+
+Transactions:

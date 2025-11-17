@@ -1,1 +1,0 @@
-g++ main.cpp group_operation.cpp -o  main
