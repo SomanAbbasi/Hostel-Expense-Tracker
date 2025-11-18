@@ -1,16 +1,12 @@
-#define byte win_byte_override
-#include <windows.h>
-#undef byte
+
 #include <iostream>
 #include <string>
 #include "../include/constants.h"
 #include "../include/file_management.h"
 #include "../include/structures.h"
 #include "../include/group_operation.h"
-#include "../include/termcolor.hpp"
 
-//  g++ file_management.cpp main.cpp group_operation.cpp -o main
-// .\build.bat
+//  g++ main.cpp group_operation.cpp -o  main
 int main()
 {
     Group allGroups[MAX_GROUPS];
@@ -26,7 +22,7 @@ int main()
     do
     {
         showMainMenu();
-        std::cout<<termcolor::green << "Enter your choice (1-8): ";
+        cout << "Enter your choice (1-8): ";
         cin >> userChoice;
         cin.ignore();
 
@@ -58,10 +54,10 @@ int main()
             showSystemInfo();
             break;
         case 8:
-            std::cout<<termcolor::green << "Thank you for using Hostel Expense Tracker!\n";
+            cout << "Thank you for using Hostel Expense Tracker!\n";
             break;
         default:
-            std::cout<<termcolor::red << "Invalid choice! Please try again.\n";
+            cout << "Invalid choice! Please try again.\n";
             pauseConsole();
         }
     } while (userChoice != 8);

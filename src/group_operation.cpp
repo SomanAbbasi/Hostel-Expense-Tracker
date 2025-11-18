@@ -1,6 +1,4 @@
-#define byte win_byte_override
-#include <windows.h>
-#undef byte
+
 #include <iostream>
 #include <string>
 #include <ctime>
@@ -10,7 +8,6 @@
 // #include "../include/file_management.h"
 #include "../include/structures.h"
 #include "../include/group_operation.h"
-#include "../include/termcolor.hpp"
 
 using namespace std;
 
@@ -18,45 +15,45 @@ void initializeSystem()
 {
     //  createReportsFolder();
 
-    std::cout<<termcolor::green << " -- WELCOME TO HOSTELLITE EXPENSE TRACKER --" << endl;
+    cout << " -- WELCOME TO HOSTELLITE EXPENSE TRACKER --" << endl;
 }
 
 void showMainMenu()
 {
     clearScreen();
     printHeader();
-    std::cout<<termcolor::blue << "1. Create New Group\n";
-    std::cout<<termcolor::blue << "2. Manage Existing Group\n";
-    std::cout<<termcolor::blue << "3. Show All Groups\n";
-    std::cout<<termcolor::blue << "4. Financial Overview\n";
+    cout << "1. Create New Group\n";
+    cout << "2. Manage Existing Group\n";
+    cout << "3. Show All Groups\n";
+    cout << "4. Financial Overview\n";
 
-    std::cout<<termcolor::blue << "5. Save All Data\n";
-    std::cout<<termcolor::blue << "6. Load All Data\n";
-    std::cout<<termcolor::blue << "7. System Info\n";
-    std::cout<<termcolor::blue << "8. Exit\n";
-    std::cout<<termcolor::blue << "==============================\n";
+    cout << "5. Save All Data\n";
+    cout << "6. Load All Data\n";
+    cout << "7. System Info\n";
+    cout << "8. Exit\n";
+    cout << "==============================\n";
 }
 
 void createNewGroup(Group allGroups[], int &totalGroups)
 {
     if (totalGroups >= MAX_GROUPS)
     {
-        std::cout<<termcolor::red << "Cannot create more groups! Maximum limit reached" << endl;
+        cout << "Cannot create more groups! Maximum limit reached" << endl;
         pauseConsole();
         return;
     }
 
-    std::cout<<termcolor::blue << "\n=== CREATE NEW GROUP ===\n";
-    std::cout<<termcolor::green << "Enter Group ID: ";
+    cout << "\n=== CREATE NEW GROUP ===\n";
+    cout << "Enter Group ID: ";
     getline(cin, allGroups[totalGroups].groupId);
     // Check if ID already exits
     if (findGroupByID(allGroups, totalGroups, allGroups[totalGroups].groupId) != -1)
     {
-        std::cout<<termcolor::red << "Error: Group with this ID already exists!\n";
+        cout << "Error: Group with this ID already exists!\n";
         pauseConsole();
         return;
     }
-    std::cout<<termcolor::green << "Enter Group Name: ";
+    cout << "Enter Group Name: ";
     getline(cin, allGroups[totalGroups].groupName);
 
     // Initialize Group data
@@ -65,10 +62,10 @@ void createNewGroup(Group allGroups[], int &totalGroups)
     allGroups[totalGroups].transactionCount = 0;
 
     totalGroups++;
-    std::cout<<termcolor::green  << "Group created successfully!\n";
+    cout << "Group created successfully!\n";
 
     // Add group first member(admin)
-    std::cout<<termcolor::green << "Let's add yourself as the first member:\n";
+    cout << "Let's add yourself as the first member:\n";
     addNewMember(allGroups[totalGroups - 1]);
 
     pauseConsole();
@@ -78,18 +75,18 @@ void manageExistingGroup(Group allGroups[], int totalGroups)
 {
     if (totalGroups == 0)
     {
-        std::cout<<termcolor::red << "No groups available. Please create a group first.\n";
+        cout << "No groups available. Please create a group first.\n";
         pauseConsole();
         return;
     }
     showAllGroupsList(allGroups, totalGroups);
     string selectedGroupId;
-    std::cout<<termcolor::green << "Enter Group ID to manage: ";
+    cout << "Enter Group ID to manage: ";
     getline(cin, selectedGroupId);
     int groupIndex = findGroupByID(allGroups, totalGroups, selectedGroupId);
     if (groupIndex == -1)
     {
-        std::cout<<termcolor::red << "Group not found!\n";
+        cout << "Group not found!\n";
         pauseConsole();
         return;
     }
@@ -100,7 +97,7 @@ void manageExistingGroup(Group allGroups[], int totalGroups)
     {
         clearScreen();
         showGroupMenu(currentGroup.groupName);
-        std::cout<<termcolor::green << "Enter your choice (1-13): ";
+        cout << "Enter your choice (1-13): ";
         cin >> groupChoice;
         cin.ignore();
 
@@ -140,10 +137,10 @@ void manageExistingGroup(Group allGroups[], int totalGroups)
             updateMemberBalances(currentGroup);
             break;
         case 12:
-            std::cout<<termcolor::green << "Returning to main menu...\n";
+            cout << "Returning to main menu...\n";
             break;
         default:
-            std::cout<<termcolor::red << "Invalid choice!\n";
+            cout << "Invalid choice!\n";
             pauseConsole();
         }
     } while (groupChoice != 12);
@@ -151,20 +148,20 @@ void manageExistingGroup(Group allGroups[], int totalGroups)
 
 void showAllGroupsList(Group allGroups[], int totalGroups)
 {
-    std::cout<<termcolor::green << "\n=== ALL GROUPS ===\n";
+    cout << "\n=== ALL GROUPS ===\n";
 
     if (totalGroups == 0)
     {
-        std::cout<<termcolor::red << "No groups found.\n";
+        cout << "No groups found.\n";
         pauseConsole();
         return;
     }
 
     for (int i = 0; i < totalGroups; i++)
     {
-        std::cout<<termcolor::blue << (i + 1) << ". " << allGroups[i].groupName
+        cout << (i + 1) << ". " << allGroups[i].groupName
              << " (ID: " << allGroups[i].groupId << ")\n";
-        std::cout<<termcolor::blue << "   Members: " << allGroups[i].memberCount
+        cout << "   Members: " << allGroups[i].memberCount
              << " | Expenses: " << allGroups[i].expenseCount
              << " | Transactions: " << allGroups[i].transactionCount << endl;
     }
@@ -175,20 +172,20 @@ void showFinancialSummary(Group allGroups[], int totalGroups)
 {
     if (totalGroups == 0)
     {
-        std::cout<<termcolor::red << "No groups available.\n";
+        cout << "No groups available.\n";
         pauseConsole();
         return;
     }
 
     showAllGroupsList(allGroups, totalGroups);
     string selectedGroupId;
-    std::cout<<termcolor::green << "Enter Group ID for financial overview: ";
+    cout << "Enter Group ID for financial overview: ";
     getline(cin, selectedGroupId);
 
     int groupIndex = findGroupByID(allGroups, totalGroups, selectedGroupId);
     if (groupIndex == -1)
     {
-       std::cout<<termcolor::red << "Group not found!\n";
+        cout << "Group not found!\n";
         pauseConsole();
         return;
     }
@@ -199,23 +196,23 @@ void showSystemInfo()
 {
 
     clearScreen();
-    std::cout<<termcolor::blue << "========================================\n";
-    std::cout<<termcolor::blue << "        SYSTEM INFORMATION\n";
-    std::cout<<termcolor::blue << "========================================\n";
-    std::cout<<termcolor::blue << "Hostel Expense Tracker - Group Management\n";
-    std::cout<<termcolor::blue << "\nFeatures:\n";
-    std::cout<<termcolor::blue << "- Create and manage multiple groups\n";
-    std::cout<<termcolor::blue << "- Track expenses and shared costs\n";
-    std::cout<<termcolor::blue << "- Record borrow/lend transactions\n";
-    std::cout<<termcolor::blue << "- Calculate settlements automatically\n";
-    std::cout<<termcolor::blue << "- View financial summaries\n";
-    std::cout<<termcolor::blue << "- Monthly expense tracking\n";
-    std::cout<<termcolor::blue << "\nLimits:\n";
-    std::cout<<termcolor::blue << "- Maximum " << MAX_GROUPS << " groups\n";
-    std::cout<<termcolor::blue << "- Maximum " << MAX_MEMBERS_PER_GROUP << " members per group\n";
-    std::cout<<termcolor::blue << "- Maximum " << MAX_EXPENSES_PER_GROUP << " expenses per group\n";
-    std::cout<<termcolor::blue << "- Maximum " << MAX_TRANSACTIONS_PER_GROUP << " transactions per group\n";
-    std::cout<<termcolor::blue << "========================================\n";
+    cout << "========================================\n";
+    cout << "        SYSTEM INFORMATION\n";
+    cout << "========================================\n";
+    cout << "Hostel Expense Tracker - Group Management\n";
+    cout << "\nFeatures:\n";
+    cout << "- Create and manage multiple groups\n";
+    cout << "- Track expenses and shared costs\n";
+    cout << "- Record borrow/lend transactions\n";
+    cout << "- Calculate settlements automatically\n";
+    cout << "- View financial summaries\n";
+    cout << "- Monthly expense tracking\n";
+    cout << "\nLimits:\n";
+    cout << "- Maximum " << MAX_GROUPS << " groups\n";
+    cout << "- Maximum " << MAX_MEMBERS_PER_GROUP << " members per group\n";
+    cout << "- Maximum " << MAX_EXPENSES_PER_GROUP << " expenses per group\n";
+    cout << "- Maximum " << MAX_TRANSACTIONS_PER_GROUP << " transactions per group\n";
+    cout << "========================================\n";
     pauseConsole();
 }
 
@@ -223,50 +220,50 @@ void showGroupMenu(string groupName)
 {
 
     printHeader();
-    std::cout<<termcolor::blue << "MANAGING GROUP: " << groupName << "\n";
-    std::cout<<termcolor::blue << "========================================\n";
-    std::cout<<termcolor::blue << "1. Add New Member\n";
-    std::cout<<termcolor::blue << "2. Show All Members\n";
-    std::cout<<termcolor::blue << "3. Add New Expense\n";
-    std::cout<<termcolor::blue << "4. Add Borrow/Lend Transaction\n";
-    std::cout<<termcolor::blue << "5. Show All Expenses\n";
-    std::cout<<termcolor::blue << "6. Show All Transactions\n";
-    std::cout<<termcolor::blue << "7. Calculate Settlements\n";
-    std::cout<<termcolor::blue << "8. Financial Overview\n";
-    std::cout<<termcolor::blue << "9. Monthly Summary\n";
-    std::cout<<termcolor::blue << "10. Settle Transaction\n";
-    std::cout<<termcolor::blue << "11. Update Balances\n";
-    std::cout<<termcolor::blue << "12. Back to Main Menu\n";
-    std::cout<<termcolor::blue << "========================================\n";
+    cout << "MANAGING GROUP: " << groupName << "\n";
+    cout << "========================================\n";
+    cout << "1. Add New Member\n";
+    cout << "2. Show All Members\n";
+    cout << "3. Add New Expense\n";
+    cout << "4. Add Borrow/Lend Transaction\n";
+    cout << "5. Show All Expenses\n";
+    cout << "6. Show All Transactions\n";
+    cout << "7. Calculate Settlements\n";
+    cout << "8. Financial Overview\n";
+    cout << "9. Monthly Summary\n";
+    cout << "10. Settle Transaction\n";
+    cout << "11. Update Balances\n";
+    cout << "12. Back to Main Menu\n";
+    cout << "========================================\n";
 }
 
 void addNewMember(Group &group)
 {
     if (group.memberCount >= MAX_MEMBERS_PER_GROUP)
     {
-        std::cout<<termcolor::red << "Cannot add more members! Group is full.\n";
+        cout << "Cannot add more members! Group is full.\n";
         pauseConsole();
         return;
     }
 
-    std::cout<<termcolor::blue << "\n=== ADD NEW MEMBER ===\n";
-    std::cout<<termcolor::green << "Enter member name: ";
+    cout << "\n=== ADD NEW MEMBER ===\n";
+    cout << "Enter member name: ";
     getline(cin, group.members[group.memberCount].name);
 
-    std::cout<<termcolor::green << "Enter member ID: ";
+    cout << "Enter member ID: ";
     getline(cin, group.members[group.memberCount].id);
 
     // Check if member ID already exists
     if (findMemberByID(group, group.members[group.memberCount].id) != -1)
     {
-        std::cout<<termcolor::red << "Error: Member with this ID already exists in the group!\n";
+        cout << "Error: Member with this ID already exists in the group!\n";
         pauseConsole();
         return;
     }
     group.members[group.memberCount].totalPaid = 0.0;
     group.members[group.memberCount].totalSpent = 0.0;
     group.memberCount += 1;
-    std::cout<<termcolor::green << "Member added successfully!\n";
+    cout << "Member added successfully!\n";
     pauseConsole();
 }
 
@@ -274,18 +271,18 @@ void showAllMembers(Group &group)
 {
     if (group.memberCount == 0)
     {
-        std::cout<<termcolor::red << "No members in group. Please add members first.\n";
+        cout << "No members in group. Please add members first.\n";
         pauseConsole();
         return;
     }
     for (int i = 0; i < group.memberCount; i++)
     {
-        std::cout<<termcolor::blue << (i + 1) << ". " << group.members[i].name
+        cout << (i + 1) << ". " << group.members[i].name
              << " (ID: " << group.members[i].id << ")\n";
-        std::cout<<termcolor::blue << "   Total Paid: Rs." << fixed << setprecision(2)
+        cout << "   Total Paid: Rs." << fixed << setprecision(2)
              << group.members[i].totalPaid;
-        std::cout<<termcolor::blue << " | Total Spent: Rs." << group.members[i].totalSpent;
-        std::cout<<termcolor::blue << " | Balance: Rs." << (group.members[i].totalPaid - group.members[i].totalSpent) << endl;
+        cout << " | Total Spent: Rs." << group.members[i].totalSpent;
+        cout << " | Balance: Rs." << (group.members[i].totalPaid - group.members[i].totalSpent) << endl;
     }
     pauseConsole();
 }
@@ -294,56 +291,56 @@ void addNewExpense(Group &group)
 {
     if (group.memberCount == 0)
     {
-        std::cout<<termcolor::red << "No members in group. Please add members first.\n";
+        cout << "No members in group. Please add members first.\n";
         pauseConsole();
         return;
     }
 
     if (group.expenseCount >= MAX_EXPENSES_PER_GROUP)
     {
-        std::cout<<termcolor::red << "Cannot add more expenses! Maximum limit reached.\n";
+        cout << "Cannot add more expenses! Maximum limit reached.\n";
         pauseConsole();
         return;
     }
 
-    std::cout<<termcolor::red << "\n=== ADD NEW EXPENSE ===\n";
+    cout << "\n=== ADD NEW EXPENSE ===\n";
 
     // Show Categories
     displayAllCategories();
     int categoryChoice;
-    std::cout<<termcolor::green << "Select category (1-" << MAX_CATEGORIES << "): ";
+    cout << "Select category (1-" << MAX_CATEGORIES << "): ";
     cin >> categoryChoice;
     cin.ignore();
 
     if (categoryChoice < 1 || categoryChoice > MAX_CATEGORIES)
     {
-        std::cout<<termcolor::red << "Invalid category selection!\n";
+        cout << "Invalid category selection!\n";
         pauseConsole();
         return;
     }
 
     group.expenses[group.expenseCount].category = categories[categoryChoice - 1];
 
-    std::cout<<termcolor::green << "Enter amount: Rs.";
+    cout << "Enter amount: Rs.";
     cin >> group.expenses[group.expenseCount].amount;
     cin.ignore();
 
     if (group.expenses[group.expenseCount].amount <= 0)
     {
-        std::cout<<termcolor::red << "Amount must be positive!\n";
+        cout << "Amount must be positive!\n";
         pauseConsole();
         return;
     }
 
     showAllMembers(group);
     int payerIndex;
-    std::cout<<termcolor::green << "Select who paid (1-" << group.memberCount << "): ";
+    cout << "Select who paid (1-" << group.memberCount << "): ";
     cin >> payerIndex;
     cin.ignore();
 
     if (payerIndex < 1 || payerIndex > group.memberCount)
     {
-        std::cout<<termcolor::red << "Invalid member selection!\n";
+        cout << "Invalid member selection!\n";
         pauseConsole();
         return;
     }
@@ -359,12 +356,12 @@ void addNewExpense(Group &group)
         group.members[i].totalSpent += sharePerPerson;
     }
 
-    std::cout<<termcolor::green << "Enter date (DD-MM-YYYY): ";
+    cout << "Enter date (DD-MM-YYYY): ";
     getline(cin, group.expenses[group.expenseCount].date);
 
     if (!checkValidDate(group.expenses[group.expenseCount].date))
     {
-        std::cout<<termcolor::red << "Invalid date format! Using current date.\n";
+        cout << "Invalid date format! Using current date.\n";
 
         //  current date
         time_t now = time(0);
@@ -380,14 +377,14 @@ void addNewExpense(Group &group)
         group.expenses[group.expenseCount].date = dayStr + "-" + monthStr + "-" + to_string(year);
     }
 
-    cout<<termcolor::green << "Enter description: ";
+    cout << "Enter description: ";
     getline(cin, group.expenses[group.expenseCount].description);
 
     group.expenses[group.expenseCount].isSettled = false;
     group.expenseCount++;
 
-    cout<<termcolor::green << "Expense added successfully!\n";
-    cout<<termcolor::green << "Each member owes: Rs." << sharePerPerson << endl;
+    cout << "Expense added successfully!\n";
+    cout << "Each member owes: Rs." << sharePerPerson << endl;
     pauseConsole();
 }
 
@@ -395,24 +392,24 @@ void addNewTransaction(Group &group)
 {
     if (group.memberCount < 2)
     {
-        std::cout<<termcolor::red << "Need at least 2 members for transactions!\n";
+        cout << "Need at least 2 members for transactions!\n";
         pauseConsole();
         return;
     }
     if (group.transactionCount >= MAX_TRANSACTIONS_PER_GROUP)
     {
-        std::cout<<termcolor::red << "Cannot add more transactions! Maximum limit reached.\n";
+        cout << "Cannot add more transactions! Maximum limit reached.\n";
         pauseConsole();
         return;
     }
 
-    std::cout<<termcolor::blue << "\n=== ADD BORROW/LEND TRANSACTION ===\n";
+    cout << "\n=== ADD BORROW/LEND TRANSACTION ===\n";
 
     showAllMembers(group);
     int borrowerIndex, lenderIndex;
-    std::cout<<termcolor::green << "Select who borrowed money (1-" << group.memberCount << "): ";
+    cout << "Select who borrowed money (1-" << group.memberCount << "): ";
     cin >> borrowerIndex;
-    std::cout<<termcolor::green << "Select who lent money (1-" << group.memberCount << "): ";
+    cout << "Select who lent money (1-" << group.memberCount << "): ";
     cin >> lenderIndex;
     cin.ignore();
 
@@ -420,7 +417,7 @@ void addNewTransaction(Group &group)
         lenderIndex < 1 || lenderIndex > group.memberCount ||
         borrowerIndex == lenderIndex)
     {
-        std::cout<<termcolor::red << "Invalid member selection!\n";
+        cout << "Invalid member selection!\n";
         pauseConsole();
         return;
     }
@@ -428,16 +425,16 @@ void addNewTransaction(Group &group)
     group.transactions[group.transactionCount].fromMember = borrowerIndex - 1;
     group.transactions[group.transactionCount].toMember = lenderIndex - 1; // Fixed: use lenderIndex
 
-    std::cout<<termcolor::green << "Enter amount: Rs.";
+    cout << "Enter amount: Rs.";
     cin >> group.transactions[group.transactionCount].amount;
     cin.ignore();
 
-    std::cout<<termcolor::green << "Enter date (DD-MM-YYYY): ";
+    cout << "Enter date (DD-MM-YYYY): ";
     getline(cin, group.transactions[group.transactionCount].date);
 
     if (!checkValidDate(group.transactions[group.transactionCount].date))
     {
-        std::cout<<termcolor::red << "Invalid date format! Using current date.\n";
+        cout << "Invalid date format! Using current date.\n";
 
         //  current system date
         time_t now = time(0);
@@ -454,23 +451,23 @@ void addNewTransaction(Group &group)
         group.transactions[group.transactionCount].date = dayStr + "-" + monthStr + "-" + to_string(year);
     }
 
-    std::cout<<termcolor::green << "Enter reason/description: ";
+    cout << "Enter reason/description: ";
     getline(cin, group.transactions[group.transactionCount].description);
 
     group.transactions[group.transactionCount].isSettled = false;
     group.transactionCount++;
 
-    std::cout<<termcolor::green << "Transaction recorded successfully!\n";
+    cout << "Transaction recorded successfully!\n";
     pauseConsole();
 }
 
 void showAllExpenses(Group &group)
 {
-    std::cout<<termcolor::blue << "\n=== ALL EXPENSES ===\n";
+    cout << "\n=== ALL EXPENSES ===\n";
 
     if (group.expenseCount == 0)
     {
-        std::cout<<termcolor::red << "No expenses recorded.\n";
+        cout << "No expenses recorded.\n";
         pauseConsole();
         return;
     }
@@ -478,45 +475,45 @@ void showAllExpenses(Group &group)
     double totalExpenses = 0;
     for (int i = 0; i < group.expenseCount; i++)
     {
-        std::cout<<termcolor::blue << (i + 1) << ". " << group.expenses[i].category
+        cout << (i + 1) << ". " << group.expenses[i].category
              << " - Rs." << fixed << setprecision(2) << group.expenses[i].amount << "\n";
-        std::cout<<termcolor::blue << "   Paid by: " << group.members[group.expenses[i].paidBy].name;
-        std::cout<<termcolor::blue << " | Date: " << group.expenses[i].date;
-        std::cout<<termcolor::blue << " | " << group.expenses[i].description;
+        cout << "   Paid by: " << group.members[group.expenses[i].paidBy].name;
+        cout << " | Date: " << group.expenses[i].date;
+        cout << " | " << group.expenses[i].description;
         if (group.expenses[i].isSettled)
         {
-            std::cout<<termcolor::green << " [SETTLED]";
+            cout << " [SETTLED]";
         }
-        std::cout<<std::endl;
+        cout << endl;
         totalExpenses += group.expenses[i].amount;
     }
 
-    std::cout<<termcolor::green << "\nTotal Expenses: Rs." << totalExpenses << endl;
+    cout << "\nTotal Expenses: Rs." << totalExpenses << endl;
     pauseConsole();
 }
 void showAllTransactions(Group &group)
 {
-    std::cout<<termcolor::blue << "\n=== ALL TRANSACTION ===\n";
+    cout << "\n=== ALL TRANSACTION ===\n";
 
     if (group.transactionCount == 0)
     {
-        std::cout<<termcolor::red << "No transaction recorded.\n";
+        cout << "No transaction recorded.\n";
         pauseConsole();
         return;
     }
 
     for (int i = 0; i < group.transactionCount; i++)
     {
-        std::cout<<termcolor::blue << (i + 1) << ". " << group.members[group.transactions[i].fromMember].name
+        cout << (i + 1) << ". " << group.members[group.transactions[i].fromMember].name
              << " borrowed Rs." << fixed << setprecision(2) << group.transactions[i].amount
              << " from " << group.members[group.transactions[i].toMember].name << "\n";
-        std::cout<<termcolor::blue << "   Date: " << group.transactions[i].date;
-        std::cout<<termcolor::blue << " | Reason: " << group.transactions[i].description;
+        cout << "   Date: " << group.transactions[i].date;
+        cout << " | Reason: " << group.transactions[i].description;
         if (group.transactions[i].isSettled)
         {
-            std::cout<<termcolor::green << " [SETTLED]";
+            cout << " [SETTLED]";
         }
-        std::cout<<std::endl;
+        cout << endl;
     }
 
     pauseConsole();
@@ -525,12 +522,12 @@ void calculateSettlements(Group &group)
 {
     if (group.memberCount == 0)
     {
-        std::cout<<termcolor::red << "No members in group.\n";
+        cout << "No members in group.\n";
         pauseConsole();
         return;
     }
 
-    std::cout<<termcolor::blue << "\n=== SETTLEMENT CALCULATIONS ===\n";
+    cout << "\n=== SETTLEMENT CALCULATIONS ===\n";
 
     // Calculate net balance for each memeber
     double memberBalances[MAX_MEMBERS_PER_GROUP] = {0};
@@ -562,22 +559,22 @@ void calculateSettlements(Group &group)
     }
 
     // Show current balances
-    cout<<termcolor::green << "Current Balances:\n";
+    cout << "Current Balances:\n";
     for (int i = 0; i < group.memberCount; i++)
     {
-        cout<<termcolor::blue << group.members[i].name << ": Rs." << fixed << setprecision(2) << memberBalances[i];
+        cout << group.members[i].name << ": Rs." << fixed << setprecision(2) << memberBalances[i];
         if (memberBalances[i] > 0)
         {
-            std::cout<<termcolor::green << " (should receive)";
+            cout << " (should receive)";
         }
         else if (memberBalances[i] < 0)
         {
-            std::cout<<termcolor::green << " (should pay)";
+            cout << " (should pay)";
         }
-        std::cout<<termcolor::reset << endl;
+        cout << endl;
     }
 
-    std::cout<<termcolor::green << "\nSettlement Instructions:\n";
+    cout << "\nSettlement Instructions:\n";
     bool needsSettlement = false;
 
     // settlement calculation
@@ -590,7 +587,7 @@ void calculateSettlements(Group &group)
                 double amount = min(-memberBalances[i], memberBalances[j]);
                 if (amount > 0.01)
                 {
-                    std::cout<<termcolor::blue << group.members[i].name << " should pay "
+                    cout << group.members[i].name << " should pay "
                          << group.members[j].name << ": Rs." << amount << endl;
                     memberBalances[i] += amount;
                     memberBalances[j] -= amount;
@@ -602,7 +599,7 @@ void calculateSettlements(Group &group)
 
     if (!needsSettlement)
     {
-        std::cout<<termcolor::red << "No settlements needed. All balances are settled!\n";
+        cout << "No settlements needed. All balances are settled!\n";
     }
 
     pauseConsole();
@@ -610,11 +607,11 @@ void calculateSettlements(Group &group)
 
 void showGroupFinancials(Group &group)
 {
-    std::cout<<termcolor::blue << "\n=== FINANCIAL OVERVIEW ===\n";
+    cout << "\n=== FINANCIAL OVERVIEW ===\n";
 
     if (group.memberCount == 0)
     {
-        std::cout<<termcolor::red << "No members in group.\n";
+        cout << "No members in group.\n";
         pauseConsole();
         return;
     }
@@ -625,39 +622,39 @@ void showGroupFinancials(Group &group)
         totalGroupExpenses += group.expenses[i].amount;
     }
 
-    std::cout<<termcolor::green << "Total Group Expenses: Rs." << fixed << setprecision(2) << totalGroupExpenses << endl;
+    cout << "Total Group Expenses: Rs." << fixed << setprecision(2) << totalGroupExpenses << endl;
 
     if (group.memberCount > 0)
     {
-        std::cout<<termcolor::green << "Average per Member: Rs." << totalGroupExpenses / group.memberCount << endl;
+        cout << "Average per Member: Rs." << totalGroupExpenses / group.memberCount << endl;
     }
 
-    std::cout<<termcolor::green << "\nMember Contributions:\n";
+    cout << "\nMember Contributions:\n";
     for (int i = 0; i < group.memberCount; i++)
     {
         double balance = group.members[i].totalPaid - group.members[i].totalSpent;
-        std::cout<<termcolor::blue << group.members[i].name << ":\n";
-        std::cout<<termcolor::blue << "  Paid: Rs." << group.members[i].totalPaid;
-        std::cout<<termcolor::blue << " | Spent: Rs." << group.members[i].totalSpent;
-        std::cout<<termcolor::blue << " | Balance: Rs." << balance;
+        cout << group.members[i].name << ":\n";
+        cout << "  Paid: Rs." << group.members[i].totalPaid;
+        cout << " | Spent: Rs." << group.members[i].totalSpent;
+        cout << " | Balance: Rs." << balance;
         if (balance > 0)
         {
-            std::cout<<termcolor::green << " (should receive)";
+            cout << " (should receive)";
         }
         else if (balance < 0)
         {
-            std::cout<<termcolor::green << " (should pay)";
+            cout << " (should pay)";
         }
-        std::cout<<termcolor::reset << endl;
+        cout << endl;
     }
 
-    std::cout<<termcolor::green << "\nOutstanding Debts:\n";
+    cout << "\nOutstanding Debts:\n";
     bool hasDebts = false;
     for (int i = 0; i < group.transactionCount; i++)
     {
         if (!group.transactions[i].isSettled)
         {
-            std::cout<<termcolor::blue << group.members[group.transactions[i].fromMember].name
+            cout << group.members[group.transactions[i].fromMember].name
                  << " owes " << group.members[group.transactions[i].toMember].name
                  << ": Rs. " << group.transactions[i].amount << endl;
             hasDebts = true;
@@ -666,35 +663,35 @@ void showGroupFinancials(Group &group)
 
     if (!hasDebts)
     {
-        std::cout<<termcolor::green << "No outstanding debts.\n";
+        cout << "No outstanding debts.\n";
     }
     pauseConsole();
 }
 void showMonthlyExpenses(Group &group)
 {
-    std::cout<<termcolor::blue << "\n=== MONTHLY EXPENSE SUMMARY ===\n";
+    cout << "\n=== MONTHLY EXPENSE SUMMARY ===\n";
 
     string monthYear;
-    std::cout<<termcolor::green << "Enter month and year to view (MM-YYYY): ";
+    cout << "Enter month and year to view (MM-YYYY): ";
     getline(cin, monthYear);
 
     if (monthYear.length() != 7 || monthYear[2] != '-')
     {
-        std::cout<<termcolor::green << "Invalid format! Please use MM-YYYY format.\n";
+        cout << "Invalid format! Please use MM-YYYY format.\n";
         pauseConsole();
         return;
     }
 
     double monthlyTotal = 0;
     int expenseCount = 0;
-    std::cout<<termcolor::green << "\nExpenses for " << monthYear << ":\n";
+    cout << "\nExpenses for " << monthYear << ":\n";
 
     for (int i = 0; i < group.expenseCount; i++)
     {
         string expenseMonthYear = group.expenses[i].date.substr(3, 7);
         if (expenseMonthYear == monthYear)
         {
-            std::cout<<termcolor::blue << "*" << group.expenses[i].category << " :Rs."
+            cout << "*" << group.expenses[i].category << " :Rs."
                  << fixed << setprecision(2) << group.expenses[i].amount
                  << "(" << group.members[group.expenses[i].paidBy].name << ")" << endl;
             monthlyTotal += group.expenses[i].amount;
@@ -702,18 +699,18 @@ void showMonthlyExpenses(Group &group)
         }
     }
 
-    std::cout<<termcolor::green << "\nSummary for " << monthYear << ":\n";
-    std::cout<<termcolor::green << "Total Expenses: Rs." << monthlyTotal << endl;
-    std::cout<<termcolor::green << "Number of Expenses: " << expenseCount << endl;
+    cout << "\nSummary for " << monthYear << ":\n";
+    cout << "Total Expenses: Rs." << monthlyTotal << endl;
+    cout << "Number of Expenses: " << expenseCount << endl;
 
     if (group.memberCount > 0)
     {
-        std::cout<<termcolor::green << "Average per Member: Rs." << monthlyTotal / group.memberCount << endl;
+        cout << "Average per Member: Rs." << monthlyTotal / group.memberCount << endl;
     }
 
     if (expenseCount == 0)
     {
-        std::cout<<termcolor::green << "No expenses found for this month.\n";
+        cout << "No expenses found for this month.\n";
     }
 
     pauseConsole();
@@ -722,7 +719,7 @@ void markTransactionSettled(Group &group)
 {
     if (group.transactionCount == 0)
     {
-        std::cout<<termcolor::red << "No transactions available.\n";
+        cout << "No transactions available.\n";
         pauseConsole();
         return;
     }
@@ -730,33 +727,33 @@ void markTransactionSettled(Group &group)
     showAllTransactions(group);
 
     int transactionNumber;
-    std::cout<<termcolor::green << "Enter transaction number to mark as settled (1-" << group.transactionCount << "): ";
+    cout << "Enter transaction number to mark as settled (1-" << group.transactionCount << "): ";
     cin >> transactionNumber;
     cin.ignore();
 
     if (transactionNumber < 1 || transactionNumber > group.transactionCount)
     {
-        std::cout<<termcolor::red << "Invalid transaction number!\n";
+        cout << "Invalid transaction number!\n";
         pauseConsole();
         return;
     }
     group.transactions[transactionNumber - 1].isSettled = true;
-    std::cout<<termcolor::green << "Transaction marked as settled!\n";
+    cout << "Transaction marked as settled!\n";
     pauseConsole();
 }
 
 void displayAllCategories()
 {
-    std::cout<<termcolor::green << "Available Categories:\n";
+    cout << "Available Categories:\n";
     for (int i = 0; i < MAX_CATEGORIES; i++)
     {
-        std::cout<<termcolor::green << (i + 1) << ". " << categories[i] << endl;
+        cout << (i + 1) << ". " << categories[i] << endl;
     }
 }
 
 void updateMemberBalances(Group &group)
 {
-    std::cout<<termcolor::blue << "\n=== UPDATING MEMBER BALANCES ===\n";
+    cout << "\n=== UPDATING MEMBER BALANCES ===\n";
     // Reset all balances
     for (int i = 0; i < group.memberCount; i++)
     {
@@ -776,7 +773,7 @@ void updateMemberBalances(Group &group)
         }
     }
 
-    std::cout<<termcolor::green << "All member balances have been updated!\n";
+    cout << "All member balances have been updated!\n";
     pauseConsole();
 }
 bool checkValidDate(string date)
@@ -840,14 +837,14 @@ void clearScreen()
 
 void pauseConsole()
 {
-    std::cout<<termcolor::green << "\nPress Enter to continue...";
+    cout << "\nPress Enter to continue...";
     cin.get();
 }
 
 void printHeader()
 {
-    std::cout<<termcolor::blue << "==============================\n";
-    std::cout<<termcolor::blue << " -- WELCOME TO HOSTELLITE EXPENSE TRACKER --" << endl;
-    std::cout<<termcolor::blue << "==============================\n";
+    cout << "==============================\n";
+    cout << " -- WELCOME TO HOSTELLITE EXPENSE TRACKER --" << endl;
+    cout << "==============================\n";
 }
 
