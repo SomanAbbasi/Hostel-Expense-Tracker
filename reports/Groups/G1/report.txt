@@ -1,0 +1,13 @@
+---------Group Report-------------
+Group Name: test1
+Group ID: 1
+Members:
+ -> soman (ID: 0001) | Paid: 0.00 | Spent: 333.33 | Balance: -333.33
+ -> ahmad (ID: 0002) | Paid: 1000.00 | Spent: 333.33 | Balance: 666.67
+ -> hamza bhatti (ID: 0003) | Paid: 0.00 | Spent: 333.33 | Balance: -333.33
+
+Expenses:
+ -> Food & Groceries | Rs:1000.00 | Paid by: ahmad | Date: 18-11-2025 | food | Not Settled
+
+Transactions:
+ -> soman owes ahmad Rs: 1000.00 | Date: 19-11-2025 | medical | Settled
