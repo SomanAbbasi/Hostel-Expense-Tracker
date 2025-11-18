@@ -7,6 +7,8 @@
 #include "../include/group_operation.h"
 
 //  g++ main.cpp group_operation.cpp -o  main
+// g++ main.cpp group_operation.cpp file_management.cpp -o  main
+
 int main()
 {
     Group allGroups[MAX_GROUPS];
