@@ -1,15 +1,4 @@
 /*
-HOW TO RUN IT
-
-OPTION 1:
-    => .\build.bat
-OPTION 2:
-    => g++ file_management.cpp main.cpp group_operation.cpp -o main
-*/
-
-
-
-/*
 HostelExpenseTracker/
 
 ├── headers/
