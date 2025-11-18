@@ -1,3 +1,6 @@
+#define byte win_byte_override
+#include <windows.h>
+#undef byte
 #include "../include/file_management.h"
 #include<iostream>
 #include<fstream>
@@ -5,6 +8,7 @@
 #include<cstring>
 #include<iomanip>
 #include "../include/group_operation.h"
+#include "../include/termcolor.hpp"
 using namespace std;
 
 bool checkFolderExists(const string& folderPath){
@@ -59,10 +63,10 @@ void saveGroupToFile(Group& group) {
     ofstream out(path);
 
     if (!out) {
-        cout << "File opening error\n";
+        std::cout <<termcolor::red<< "File opening error\n";
         return;
     } else {
-        cout << "File opened successfully\n";
+        std::cout <<termcolor::green<< "File opened successfully\n";
     }
 
     // Save group basic details
@@ -103,7 +107,7 @@ void saveGroupToFile(Group& group) {
 
     out.close();
 
-    cout << "Data has been saved successfully\n";
+    std::cout <<termcolor::green<< "Data has been saved successfully\n";
 }
 
 void loadGroupFromFile(Group& group) {
@@ -111,10 +115,10 @@ void loadGroupFromFile(Group& group) {
     ifstream in(path);
 
     if (!in) {
-        cout << "File opening error\n";
+        std::cout<<termcolor::red << "File opening error\n";
         return;
     } else {
-        cout << "File opened successfully\n";
+        std::cout <<termcolor::green<< "File opened successfully\n";
     }
 
     // Load group basic info
@@ -165,7 +169,7 @@ void loadGroupFromFile(Group& group) {
 
     in.close();
 
-    cout << "Data has been loaded successfully\n";
+    std::cout <<termcolor::green<< "Data has been loaded successfully\n";
 }
 
 
@@ -177,10 +181,10 @@ void createGroupReport(Group& group){
     ofstream out(path);
 
     if (!out){
-        cout <<"File opening error\n";
+        std::cout<<termcolor::red <<"File opening error\n";
         return;
     } else {
-        cout <<"File opened successfully\n";
+        std::cout<<termcolor::green <<"File opened successfully\n";
     }
 
     out <<"---------Group Report-------------\n";
@@ -219,7 +223,7 @@ void createGroupReport(Group& group){
     }
 
     out.close();
-    cout <<"Report has been created successfully\n";
+    std::cout<<termcolor::green <<"Report has been created successfully\n";
 }
 
 void saveAllGroupsData(Group groups[], int groupCount){
@@ -231,10 +235,10 @@ void saveAllGroupsData(Group groups[], int groupCount){
 
     ofstream file("reports\\Groups\\Groups_list.txt");
     if (!file){
-        cout <<"File opening error for Groups_list.txt\n";
+        std::cout<<termcolor::red <<"File opening error for Groups_list.txt\n";
         return;
     } else {
-        cout <<"File opened successfully\n";
+        std::cout<<termcolor::green<<"File opened successfully\n";
     }
 
     for (int i=0; i<groupCount; i++){
@@ -244,7 +248,7 @@ void saveAllGroupsData(Group groups[], int groupCount){
     }
     file.close();
 
-    cout <<"All groups have been saved successfully\n";
+    std::cout<<termcolor::green <<"All groups have been saved successfully\n";
 }
 
 void loadAllGroupsData(Group groups[], int& groupCount){
@@ -252,10 +256,10 @@ void loadAllGroupsData(Group groups[], int& groupCount){
 
     ifstream file("reports\\Groups\\Groups_list.txt");
     if (!file){
-        cout <<"File opening error for Groups_list.txt\n";
+        std::cout<<termcolor::red <<"File opening error for Groups_list.txt\n";
         return;
     } else {
-        cout <<"File opened successfully\n";
+        std::cout<<termcolor::green <<"File opened successfully\n";
     }
 
     string groupID;
@@ -266,5 +270,5 @@ void loadAllGroupsData(Group groups[], int& groupCount){
     }
     file.close();
 
-    cout <<"All the data has been loaded successfully\n";
+    std::cout<<termcolor::green <<"All the data has been loaded successfully\n";
 }
