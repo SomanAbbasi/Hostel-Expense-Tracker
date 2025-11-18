@@ -7,6 +7,10 @@
 #include "../include/group_operation.h"
 using namespace std;
 
+
+
+
+
 bool checkFolderExists(const string& folderPath){
     //demo file for checking folder
     string file = folderPath + "/check.txt";
@@ -268,3 +272,6 @@ void loadAllGroupsData(Group groups[], int& groupCount){
 
     cout <<"All the data has been loaded successfully\n";
 }
+
+
+

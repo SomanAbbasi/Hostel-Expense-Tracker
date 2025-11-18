@@ -6,16 +6,14 @@
 #include "../include/structures.h"
 #include "../include/group_operation.h"
 
-//  g++ main.cpp group_operation.cpp -o  main
+//  g++ main.cpp group_operation.cpp file_management.cpp -o  main
 int main()
 {
     Group allGroups[MAX_GROUPS];
     int totalGroups = 0;
 
     initializeSystem();
-    // Ensuring to have the Files
     createReportsDirectory();
-
 
     int userChoice;
 
@@ -43,18 +41,18 @@ int main()
 
             break;
         case 5:
-            saveAllGroupsData(allGroups,totalGroups);
+            saveAllGroupsData(allGroups, totalGroups);
             pauseConsole();
             break;
         case 6:
-            loadAllGroupsData(allGroups,totalGroups);
+            loadAllGroupsData(allGroups, totalGroups);
             pauseConsole();
             break;
         case 7:
             showSystemInfo();
             break;
         case 8:
-            cout << "Thank you for using Hostel Expense Tracker!\n";
+            cout << "Thank you for using Hostellite Expense Tracker!\n";
             break;
         default:
             cout << "Invalid choice! Please try again.\n";

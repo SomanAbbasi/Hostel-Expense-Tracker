@@ -3,8 +3,8 @@
 #include <string>
 using namespace std;
 
-const int MAX_GROUPS = 20;
-const int MAX_MEMBERS_PER_GROUP = 10;
+const int MAX_GROUPS = 50;
+const int MAX_MEMBERS_PER_GROUP = 20;
 const int MAX_EXPENSES_PER_GROUP = 100;
 const int MAX_TRANSACTIONS_PER_GROUP = 200;
 const int MAX_NAME_LENGTH = 50;

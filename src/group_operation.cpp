@@ -5,7 +5,7 @@
 #include <iomanip>
 #include <algorithm>
 #include "../include/constants.h"
-// #include "../include/file_management.h"
+ //#include "../include/file_management.h"
 #include "../include/structures.h"
 #include "../include/group_operation.h"
 
@@ -13,7 +13,6 @@ using namespace std;
 
 void initializeSystem()
 {
-    //  createReportsFolder();
 
     cout << " -- WELCOME TO HOSTELLITE EXPENSE TRACKER --" << endl;
 }
@@ -264,6 +263,7 @@ void addNewMember(Group &group)
     group.members[group.memberCount].totalSpent = 0.0;
     group.memberCount += 1;
     cout << "Member added successfully!\n";
+
     pauseConsole();
 }
 
@@ -385,6 +385,8 @@ void addNewExpense(Group &group)
 
     cout << "Expense added successfully!\n";
     cout << "Each member owes: Rs." << sharePerPerson << endl;
+
+
     pauseConsole();
 }
 
@@ -458,6 +460,7 @@ void addNewTransaction(Group &group)
     group.transactionCount++;
 
     cout << "Transaction recorded successfully!\n";
+
     pauseConsole();
 }
 
@@ -774,6 +777,7 @@ void updateMemberBalances(Group &group)
     }
 
     cout << "All member balances have been updated!\n";
+
     pauseConsole();
 }
 bool checkValidDate(string date)
@@ -802,9 +806,6 @@ bool checkValidDate(string date)
     return true;
 }
 
-// bool isValidDate(const string &date)
-// {
-// }
 
 int findMemberByID(Group &group, string memberId)
 {

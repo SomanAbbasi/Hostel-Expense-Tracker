@@ -20,3 +20,5 @@ void loadGroupFromFile(Group& group);
 void createGroupReport(Group& group);
 void saveAllGroupsData(Group groups[], int groupCount);
 void loadAllGroupsData(Group groups[], int& groupCount);
+
+

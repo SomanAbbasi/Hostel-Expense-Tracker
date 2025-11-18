@@ -1,0 +1,27 @@
+# Compiled object files and executables
+*.exe
+*.out
+*.o
+*.obj
+*.dll
+*.so
+
+
+# Build folders
+/build/
+/bin/
+/Debug/
+/Release/
+
+
+# Reports (optional)
+/reports/
+
+
+# IDE/editor files
+.vscode/
+
+
+# OS files
+.DS_Store
+Thumbs.db
